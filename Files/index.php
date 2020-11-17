@@ -38,14 +38,18 @@
 <script>
 function enter() {
 
-/* Recupero i valori dai campi precedentemente creati e li passo come variabili Javascript */
+/* 
+    Recupero i valori dai campi precedentemente creati e li passo come variabili Javascript 
+*/
   var idNode = document.getElementById('idNode').value;
   var language = document.getElementById('language').value;
   var search_keyword = document.getElementById('search_keyword').value;
   var page_num = document.getElementById('page_num').value;
   var page_size = document.getElementById('page_size').value;
 
-/* Passo tali variabili all'API tramite chiamata AJAX */
+/* 
+    Passo tali variabili all'API tramite chiamata AJAX 
+*/
         $.ajax ({
           type: 'get',
           url: './api.php',
@@ -58,13 +62,17 @@ function enter() {
             },
           success: function(data) {
 
-/* Se la chiamata ha successo impongo che venga anzitutto ripulito il contenitore dei risultati, quindi converto la stringa JSON in oggetto Javascript */           
+/* 
+    Se la chiamata ha successo impongo che venga anzitutto ripulito il contenitore dei risultati, quindi converto la stringa JSON in oggetto Javascript 
+*/           
             $('.results').empty();
             
             var data = JSON.parse(data);
             console.log(data);
 
-/* Se nella stringa non ho alcun messaggio di errore procedo con la formattazione dei risultati. */               
+/* 
+    Se nella stringa non ho alcun messaggio di errore procedo con la formattazione dei risultati. 
+*/               
             if(data.error == null) {
             
 /* 
@@ -79,7 +87,9 @@ function enter() {
                     var j = data.nodes[0].level;
                     var x = data.nodes[i+1]?.level-j;
 
-/* Analizzo i risultati per migliorare la formattazione tramite indentatura visibile */                        
+/* 
+    Analizzo i risultati per migliorare la formattazione tramite indentatura visibile 
+*/                        
                     if (x == 2) {
                             
                         for(j=2; j<data.nodes[i+1]?.level; j++){ 
@@ -98,7 +108,9 @@ function enter() {
                     }
                 }
             
-/* Passo a verificare che tutti i risultati stiano nella stessa pagina. In caso contrario recupero le proprietà necessarie a creare i pulsanti di navigazione. */
+/* 
+    Passo a verificare che tutti i risultati stiano nella stessa pagina. In caso contrario recupero le proprietà necessarie a creare i pulsanti di navigazione. 
+*/
             if (data.prev_page !== null && data.next_page == null) {
                     
                 $('.results').append('<p id="prev">< Pagina Precedente</p');
@@ -112,7 +124,9 @@ function enter() {
                 $('.results').append('<span id="prev">< Pagina Precedente</span> | <span id="next">Pagina Successiva ></span>');
             }
             
-/* Passo a due funzioni il compito di modificare l'indicatore della pagina e rilanciare la funzione principale per restituire i nuovi risultati. */
+/* 
+    Passo a due funzioni il compito di modificare l'indicatore della pagina e rilanciare la funzione principale per restituire i nuovi risultati. 
+*/
                 $('#prev').css('cursor','pointer').on('click', function() {
                     document.getElementById('page_num').value= page_num - 1;
                     return enter();
@@ -123,14 +137,18 @@ function enter() {
                     return enter();
                 });
         } else {
-/* Nel caso in cui il JSON abbia errore, lo mando a schermo al posto dei risultati. */                   
+/* 
+    Nel caso in cui il JSON abbia errore, lo mando a schermo al posto dei risultati. 
+*/                   
             $('.results').append(data.error);
                 
         }
     }
             
 });
-/* Passaggio obbligato per settare l'asincronicità della chiamata. */      
+/* 
+    Passaggio obbligato per settare l'asincronicità della chiamata. 
+*/      
     return false;
 }
 
