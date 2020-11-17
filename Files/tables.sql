@@ -2,7 +2,7 @@
 	Versione phpMyAdmin 4.9.6
 	Versione del server: 5.7.26
 	Versione PHP: 7.3 
-*/
+*/ 
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO"; 	-- Evito la generazione di nuovi valori AUTO_INCREMENT quando viene inserito uno 0 in una colonna.
 SET AUTOCOMMIT = 0;				-- Permetto di abilitare transazioni multi-statement senza dichiararle prima di ogni istruzione che causa commit implicito.
