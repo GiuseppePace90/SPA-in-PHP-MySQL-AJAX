@@ -14,12 +14,15 @@ $db_name = "name_database";
 	valore alla variabile $e che raccolgo col metodo getMessage().
 */
 
-try { 
+	try { 
+		
 		$db = new PDO('mysql:host=hostIP;dbname=' . $db_name . ';charset=utf8', $db_user, $db_pass);
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-} catch (PDOException $e){
+	} catch (PDOException $e){
+		
 		exit($e->getMessage());
-}
+		
+	}
 
 ?>
