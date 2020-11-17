@@ -70,7 +70,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     opposto, ricavando in entrambi i casi -tramite array associativo- l'ID del o dei nodi in questione, nella lingua selezionata, con cui andrò a 
     filtrare i risultati finali.
 */	
-    if(!isset($_GET['search_keyword']) || empty($_GET['search_keyword'])) {
+       if(!isset($_GET['search_keyword']) || empty($_GET['search_keyword'])) {
     
 	    $query_slt_idNode = "SELECT idNode 
 	                         FROM node_tree_names 
@@ -81,7 +81,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
 	    $result_idNode = $query_stmt_idNode->fetchAll(PDO::FETCH_ASSOC);
 	
 	
-    } elseif(isset($_GET['search_keyword']) || !empty($_GET['search_keyword'])) {
+       } elseif(isset($_GET['search_keyword']) || !empty($_GET['search_keyword'])) {
     
 	    $search_keyword = $_GET['search_keyword'];
 	    
@@ -100,7 +100,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     degli estremi e del livello di profondità, usando l'ID importato tramite AJAX e quelli contenuti nell'array di cui sopra per filtrare i risultati 
     dei nodi genitori e dei nodi figli.
 */    
-      foreach($result_idNode as $array_idNode_keys) {
+        foreach($result_idNode as $array_idNode_keys) {
 	
 	    $idNode = $array_idNode_keys['idNode'];
     
@@ -175,21 +175,21 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     corretto che garantisca una pagina ai record residui, quindi in modo analogo a prima inizio a popolare l'array $json_pages che contiene il numero 
     delle pagine ottenute stando al numero di records e di records per pagina da visualizzare.
 */      
-    if(count($json_nodes)>$page_size_input) {
+      if(count($json_nodes)>$page_size_input) {
         
-        $page_count = count($json_nodes)/$page_size_input;
+          $page_count = count($json_nodes)/$page_size_input;
                 
-        $page_num = (round($page_count)<$page_count) ? (round($page_count) + 1) : round($page_count);
+          $page_num = (round($page_count)<$page_count) ? (round($page_count) + 1) : round($page_count);
         
-        $pages = array();
+          $pages = array();
                 
-            for ($i=0; $i<=$page_num; $i++) {
+             for ($i=0; $i<=$page_num; $i++) {
             
-                array_push($pages,$i);
+                 array_push($pages,$i);
                 
-            }
+             }
             
-        $json_pages[] = $pages;
+          $json_pages[] = $pages;
 
 /*
     Verifico che il numero della pagina selezionato sia compatibile con le pagine create e, se risulta compreso fra due pagine esistenti, identifico 
@@ -212,20 +212,20 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
 /*
     Creo la paginazione dei risultati, sezionando l'array che contiene tutti i nodi, in funzione dei parametri di input.
 */
-    if($page_num_input == 0) {
+      if($page_num_input == 0) {
         
-        $json_nodes = array_slice($json_nodes, 0, $page_size_input);
+          $json_nodes = array_slice($json_nodes, 0, $page_size_input);
         
-    } else if ($page_num_input > 0) {
+      } else if ($page_num_input > 0) {
         
-        $json_nodes = array_slice($json_nodes, ($page_num_input*$page_size_input), $page_size_input);
+          $json_nodes = array_slice($json_nodes, ($page_num_input*$page_size_input), $page_size_input);
 
-    }
+      }
 
 /*
     A questo punto codifico le variabili di interesse come elementi di un array JSON che poi vado a recuperare tramite promise di AJAX lato Front-End.
 */
-echo json_encode(array('nodes'=>$json_nodes,'next_page'=>$next_page,'prev_page'=>$prev_page,'error'=>$errore)); 
+   echo json_encode(array('nodes'=>$json_nodes,'next_page'=>$next_page,'prev_page'=>$prev_page,'error'=>$errore)); 
 
 }
 
