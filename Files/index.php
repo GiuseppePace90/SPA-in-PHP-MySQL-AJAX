@@ -113,7 +113,7 @@ function enter() {
 */
             if (data.prev_page !== null && data.next_page == null) {
                     
-                $('.results').append('<p id="prev">< Pagina Precedente</p');
+                $('.results').append('<span id="prev">< Pagina Precedente</span>');
                 
             } else if(data.next_page !== null && data.prev_page == null) {
                 
