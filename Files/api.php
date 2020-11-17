@@ -104,7 +104,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
 	
 	    $idNode = $array_idNode_keys['idNode'];
     
-	    $query_slt_node = "SELECT Child.idNode, Child.iLeft, Child.iRight, Child.level, (COUNT(Parent.idNode) - 1), (COUNT(Child.idNode) - 1) AS count
+	    $query_slt_node = "SELECT Child.idNode, Child.iLeft, Child.iRight, Child.level, (COUNT(Parent.idNode) - 1)
 			       FROM node_tree AS Child, node_tree AS Parent
 			       WHERE Child.iLeft BETWEEN Parent.iLeft AND Parent.iRight AND 
 			       IF (Parent.idNode!='$idNode', Parent.idNode='$idNode_input' AND Child.idNode='$idNode', Parent.idNode='$idNode')  
