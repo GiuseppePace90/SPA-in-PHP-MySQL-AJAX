@@ -72,7 +72,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
 */	
     if(!isset($_GET['search_keyword']) || empty($_GET['search_keyword'])) {
     
-	    $query_slt_idNode = "SELECT idNode 
+	    	$query_slt_idNode = "SELECT idNode 
 	                         FROM node_tree_names 
 	                         WHERE idNode='$idNode_input' AND language='$language_input'";
 		$query_stmt_idNode = $db->prepare($query_slt_idNode);
@@ -83,7 +83,8 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
 	
     } elseif(isset($_GET['search_keyword']) || !empty($_GET['search_keyword'])) {
     
-	    $search_keyword = $_GET['search_keyword'];
+	    	$search_keyword = $_GET['search_keyword'];
+	    
 		$query_slt_idNode = "SELECT idNode 
 	                         FROM node_tree_names 
 	                         WHERE language='$language_input' AND NodeName LIKE '%$search_keyword%'";
