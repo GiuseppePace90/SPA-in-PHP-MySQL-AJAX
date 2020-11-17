@@ -6,7 +6,7 @@
 require('config.php');
 
 /*
-	Mi assicuro che le variabili obbligatorie e non obbligatorie sia settate, tranne la search_keyword, di cui mi occupo più avanti.
+	Mi assicuro che le variabili obbligatorie e non obbligatorie siano settate, tranne la search_keyword, di cui mi occupo più avanti.
 */
 if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']) || isset($_GET['page_size'])) {
 
