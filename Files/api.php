@@ -150,7 +150,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     fuori dal while-loop, all'interno dell'array $json_nodes. Rispetto a quanto richiesto ho estrapolato anche il parametro level per una migliore 
     formattazione finale dei risultati.
 */     	
-			foreach($result_nodeName as $array_nodeName_keys) {
+		foreach($result_nodeName as $array_nodeName_keys) {
 
 			$NodeName = $array_nodeName_keys['NodeName'];
 
