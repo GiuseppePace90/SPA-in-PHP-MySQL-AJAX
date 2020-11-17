@@ -11,7 +11,9 @@ require('config.php');
 if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']) || isset($_GET['page_size'])) {
 
 /*
-	Definisco le variabili così settate come nuove variabili PHP. Per quelle provenienti da campi di testo faccio l'escape di tutti i valori non numerici. Mi assicuro che il replace dia numeri in formato stringa diversi da 0 e non interi in modo da indurre in errore un input non conforme.
+	Definisco le variabili così settate come nuove variabili PHP. Per quelle provenienti da campi di testo faccio l'escape di tutti i 
+	valori non numerici. Mi assicuro che il replace dia numeri in formato stringa diversi da 0 e non interi in modo da indurre in errore 
+	un input non conforme.
 */
 	$idNode_input = $_GET['idNode'];
 
@@ -32,7 +34,8 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
         } 
 
 /*
-    Impongo i vincoli di progetto. Per le varibili $page_num_input e $page_size_input ho pilotato la conversione da stringa a numero con una banale divisione per 1.
+    Impongo i vincoli di progetto. Per le varibili $page_num_input e $page_size_input ho pilotato la conversione da stringa a numero con una 
+    banale divisione per 1.
 */
 	if($idNode_input < 0 || $idNode_input > 12) {
 	    
@@ -63,7 +66,9 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     $json_pages = array();
 	
 /*
-    Interrogo il DB con puntamento alla tabella node_tree-Names, sia nel caso in cui la variabile search_keywork esista e non sia vuota, sia nel caso opposto, ricavando in entrambi i casi -tramite array associativo- l'ID del o dei nodi in questione, nella lingua selezionata, con cui andrò a filtrare i risultati finali.
+    Interrogo il DB con puntamento alla tabella node_tree-Names, sia nel caso in cui la variabile search_keywork esista e non sia vuota, sia nel caso 
+    opposto, ricavando in entrambi i casi -tramite array associativo- l'ID del o dei nodi in questione, nella lingua selezionata, con cui andrò a 
+    filtrare i risultati finali.
 */	
     if(!isset($_GET['search_keyword']) || empty($_GET['search_keyword'])) {
     
@@ -90,7 +95,9 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     }
 
 /*
-    Per ogni elemento dell'array $result_idNode, contenente l'ID di tutti i nodi selezionati, interrogo il DB alla ricerca degli eventuali nodi figli, degli estremi e del livello di profondità, usando l'ID importato tramite AJAX e quelli contenuti nell'array di cui sopra per filtrare i risultati dei nodi genitori e dei nodi figli.
+    Per ogni elemento dell'array $result_idNode, contenente l'ID di tutti i nodi selezionati, interrogo il DB alla ricerca degli eventuali nodi figli, 
+    degli estremi e del livello di profondità, usando l'ID importato tramite AJAX e quelli contenuti nell'array di cui sopra per filtrare i risultati 
+    dei nodi genitori e dei nodi figli.
 */    
 	foreach($result_idNode as $array_idNode_keys) {
 	
@@ -98,14 +105,16 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     
     	$query_slt_node = "SELECT Child.idNode, Child.iLeft, Child.iRight, Child.level, (COUNT(Parent.idNode) - 1), (COUNT(Child.idNode) - 1) AS count
                            FROM node_tree AS Child, node_tree AS Parent
-                           WHERE Child.iLeft BETWEEN Parent.iLeft AND Parent.iRight AND IF (Parent.idNode!='$idNode', Parent.idNode='$idNode_input' AND Child.idNode='$idNode', Parent.idNode='$idNode')  
+                           WHERE Child.iLeft BETWEEN Parent.iLeft AND Parent.iRight AND 
+			   IF (Parent.idNode!='$idNode', Parent.idNode='$idNode_input' AND Child.idNode='$idNode', Parent.idNode='$idNode')  
                            GROUP BY Child.idNode
                            ORDER BY Child.iLeft";
     	$query_stmt_node = $db->prepare($query_slt_node);
     	$query_stmt_node->execute();
     	
 /*
-    Formalizzo i risultati in un array associativo e ad ogni elemento al suo interno associo una variabile PHP. Uso quindi gli estremi per ricavare il numero di nodi figli di ogni nodo genitore.
+    Formalizzo i risultati in un array associativo e ad ogni elemento al suo interno associo una variabile PHP. Uso quindi gli estremi per ricavare 
+    il numero di nodi figli di ogni nodo genitore.
 */     	
     	while ($result_node = $query_stmt_node->fetch(PDO::FETCH_ASSOC)) {
     	    
@@ -135,7 +144,9 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
         	$result_nodeName = $query_stmt_nodeName->fetchAll(PDO::FETCH_ASSOC);
 
 /*
-    Per ogni elemento trovato mi assicuro che il valore sia diverso da null, quindi inizio a popolare un array di comodo che uso per veicolare i parametri fuori dal while-loop, all'interno dell'array $json_nodes. Rispetto a quanto richiesto ho estrapolato anche il parametro level per una migliore formattazione finale dei risultati.
+    Per ogni elemento trovato mi assicuro che il valore sia diverso da null, quindi inizio a popolare un array di comodo che uso per veicolare i parametri 
+    fuori dal while-loop, all'interno dell'array $json_nodes. Rispetto a quanto richiesto ho estrapolato anche il parametro level per una migliore 
+    formattazione finale dei risultati.
 */     	
         	foreach($result_nodeName as $array_nodeName_keys) {
         	    
@@ -158,7 +169,9 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     }
 
 /*
-    Verifico che gli elementi dell'array superiano il valore di record per pagina, mi assicuro che in caso di valore decimale venga resituito l'intero corretto che garantisca una pagina ai record residui, quindi in modo analogo a prima inizio a popolare l'array $json_pages che contiene il numero delle pagine ottenute stando al numero di records e di records per pagina da visualizzare.
+    Verifico che gli elementi dell'array superiano il valore di record per pagina, mi assicuro che in caso di valore decimale venga resituito l'intero 
+    corretto che garantisca una pagina ai record residui, quindi in modo analogo a prima inizio a popolare l'array $json_pages che contiene il numero 
+    delle pagine ottenute stando al numero di records e di records per pagina da visualizzare.
 */      
     if(count($json_nodes)>$page_size_input) {
         
@@ -177,7 +190,8 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
         $json_pages[] = $pages;
 
 /*
-    Verifico che il numero della pagina selezionato sia compatibile con le pagine create e, se risulta compreso fra due pagine esistenti, identifico il valore di entrambe. Tali valori verranno esportati in JSON per creare i pulsanti "Pagina precedente" e "Pagina successiva" lato Front-End.
+    Verifico che il numero della pagina selezionato sia compatibile con le pagine create e, se risulta compreso fra due pagine esistenti, identifico 
+    il valore di entrambe. Tali valori verranno esportati in JSON per creare i pulsanti "Pagina precedente" e "Pagina successiva" lato Front-End.
 */
         if($page_num_input < (count($json_pages[0]) - 2)) {
             
