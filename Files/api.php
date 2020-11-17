@@ -66,7 +66,7 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     $json_pages = array();
 	
 /*
-    Interrogo il DB con puntamento alla tabella node_tree-Names, sia nel caso in cui la variabile search_keywork esista e non sia vuota, sia nel caso 
+    Interrogo il DB con puntamento alla tabella node_tree_names, sia nel caso in cui la variabile search_keywork esista e non sia vuota, sia nel caso 
     opposto, ricavando in entrambi i casi -tramite array associativo- l'ID del o dei nodi in questione, nella lingua selezionata, con cui andrò a 
     filtrare i risultati finali.
 */	
