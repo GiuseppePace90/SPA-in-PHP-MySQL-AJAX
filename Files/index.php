@@ -67,7 +67,10 @@ function enter() {
 /* Se nella stringa non ho alcun messaggio di errore procedo con la formattazione dei risultati. */               
             if(data.error == null) {
             
-/* Recupero la lunghezza della proprietà nodes con accesso condizionale mediante ? per byassare eventuali errori undefined. Per ogni elemento aggancio le proprietà dell'oggetto richieste dal progetto (node_id, name, childre_count) al contenitore dei risultati. */ 
+/* 
+    Recupero la lunghezza della proprietà nodes con accesso condizionale mediante ? per byassare eventuali errori undefined. Per ogni elemento aggancio le 
+    proprietà dell'oggetto richieste dal progetto (node_id, name, childre_count) al contenitore dei risultati. 
+*/ 
                 for(i=0; i<data.nodes?.length; i++) {
                         
                     $('.results').append(data.nodes[i].node_id + ', ' + data.nodes[i].name + ', ' + data.nodes[i].children_count + '<br><br>');
