@@ -72,26 +72,26 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
 */	
     if(!isset($_GET['search_keyword']) || empty($_GET['search_keyword'])) {
     
-	    	$query_slt_idNode = "SELECT idNode 
+	    $query_slt_idNode = "SELECT idNode 
 	                         FROM node_tree_names 
 	                         WHERE idNode='$idNode_input' AND language='$language_input'";
-		$query_stmt_idNode = $db->prepare($query_slt_idNode);
-		$query_stmt_idNode->execute();
+	    $query_stmt_idNode = $db->prepare($query_slt_idNode);
+	    $query_stmt_idNode->execute();
 		    
-		$result_idNode = $query_stmt_idNode->fetchAll(PDO::FETCH_ASSOC);
+	    $result_idNode = $query_stmt_idNode->fetchAll(PDO::FETCH_ASSOC);
 	
 	
     } elseif(isset($_GET['search_keyword']) || !empty($_GET['search_keyword'])) {
     
-	    	$search_keyword = $_GET['search_keyword'];
+	    $search_keyword = $_GET['search_keyword'];
 	    
-		$query_slt_idNode = "SELECT idNode 
+	    $query_slt_idNode = "SELECT idNode 
 	                         FROM node_tree_names 
 	                         WHERE language='$language_input' AND NodeName LIKE '%$search_keyword%'";
-		$query_stmt_idNode = $db->prepare($query_slt_idNode);
-		$query_stmt_idNode->execute();
+	    $query_stmt_idNode = $db->prepare($query_slt_idNode);
+	    $query_stmt_idNode->execute();
 		    
-		$result_idNode = $query_stmt_idNode->fetchAll(PDO::FETCH_ASSOC);
+	    $result_idNode = $query_stmt_idNode->fetchAll(PDO::FETCH_ASSOC);
 	
     }
 
@@ -100,74 +100,75 @@ if(isset($_GET['idNode']) && isset($_GET['language']) || isset($_GET['page_num']
     degli estremi e del livello di profondità, usando l'ID importato tramite AJAX e quelli contenuti nell'array di cui sopra per filtrare i risultati 
     dei nodi genitori e dei nodi figli.
 */    
-	foreach($result_idNode as $array_idNode_keys) {
+      foreach($result_idNode as $array_idNode_keys) {
 	
 	    $idNode = $array_idNode_keys['idNode'];
     
-    	$query_slt_node = "SELECT Child.idNode, Child.iLeft, Child.iRight, Child.level, (COUNT(Parent.idNode) - 1), (COUNT(Child.idNode) - 1) AS count
-                           FROM node_tree AS Child, node_tree AS Parent
-                           WHERE Child.iLeft BETWEEN Parent.iLeft AND Parent.iRight AND 
-			   IF (Parent.idNode!='$idNode', Parent.idNode='$idNode_input' AND Child.idNode='$idNode', Parent.idNode='$idNode')  
-                           GROUP BY Child.idNode
-                           ORDER BY Child.iLeft";
-    	$query_stmt_node = $db->prepare($query_slt_node);
-    	$query_stmt_node->execute();
+	    $query_slt_node = "SELECT Child.idNode, Child.iLeft, Child.iRight, Child.level, (COUNT(Parent.idNode) - 1), (COUNT(Child.idNode) - 1) AS count
+			       FROM node_tree AS Child, node_tree AS Parent
+			       WHERE Child.iLeft BETWEEN Parent.iLeft AND Parent.iRight AND 
+			       IF (Parent.idNode!='$idNode', Parent.idNode='$idNode_input' AND Child.idNode='$idNode', Parent.idNode='$idNode')  
+			       GROUP BY Child.idNode
+			       ORDER BY Child.iLeft";
+	    $query_stmt_node = $db->prepare($query_slt_node);
+	    $query_stmt_node->execute();
     	
 /*
     Formalizzo i risultati in un array associativo e ad ogni elemento al suo interno associo una variabile PHP. Uso quindi gli estremi per ricavare 
     il numero di nodi figli di ogni nodo genitore.
 */     	
-    	while ($result_node = $query_stmt_node->fetch(PDO::FETCH_ASSOC)) {
-    	    
-    	    $idNode_output = $result_node['idNode'];
-    	    $iLeft = $result_node['iLeft'];
-            $iRight = $result_node['iRight'];
-            $level = $result_node['level'];
-            $countChild = ($iRight - ($iLeft + 1))/2;
+		while ($result_node = $query_stmt_node->fetch(PDO::FETCH_ASSOC)) {
+
+		    $idNode_output = $result_node['idNode'];
+		    $iLeft = $result_node['iLeft'];
+		    $iRight = $result_node['iRight'];
+		    $level = $result_node['level'];
+		    $countChild = ($iRight - ($iLeft + 1))/2;
 
 /*
     Impongo che se un nodo genitore non ha figli restituisca 0 oppure il numero di nodi figli.
 */         
-            if($countChild == 0) {
-                $new_countChild = 0;
-            } elseif($countChild > 0) {
-                $new_countChild = $countChild;
-            }
+			    if($countChild == 0) {
+				$new_countChild = 0;
+			    } elseif($countChild > 0) {
+				$new_countChild = $countChild;
+			    }
 
 /*
     Interrogo il DB con puntamento alla tabella node_tree_names per selezionare stavolta tutti i nomi dei nodi precedentemente selezionati, nella lingua impostata.
 */          
-            $query_slt_nodeName = "SELECT NodeName 
-                                   FROM node_tree_names 
-                                   WHERE idNode='$idNode_output' AND language='$language_input'";
-        	$query_stmt_nodeName = $db->prepare($query_slt_nodeName);
-        	$query_stmt_nodeName->execute();
-        	$result_nodeName = $query_stmt_nodeName->fetchAll(PDO::FETCH_ASSOC);
+            	    $query_slt_nodeName = "SELECT NodeName 
+                                   	   FROM node_tree_names 
+                                   	   WHERE idNode='$idNode_output' AND language='$language_input'";
+        	    $query_stmt_nodeName = $db->prepare($query_slt_nodeName);
+        	    $query_stmt_nodeName->execute();
+			
+        	    $result_nodeName = $query_stmt_nodeName->fetchAll(PDO::FETCH_ASSOC);
 
 /*
     Per ogni elemento trovato mi assicuro che il valore sia diverso da null, quindi inizio a popolare un array di comodo che uso per veicolare i parametri 
     fuori dal while-loop, all'interno dell'array $json_nodes. Rispetto a quanto richiesto ho estrapolato anche il parametro level per una migliore 
     formattazione finale dei risultati.
 */     	
-        	foreach($result_nodeName as $array_nodeName_keys) {
-        	    
-            	$NodeName = $array_nodeName_keys['NodeName'];
-        
-        	    if($NodeName !== null) {
-        	        
-                    $nodes = array();
-                    
-                    $nodes['node_id'] = $idNode_output;
-                    $nodes['name'] = $NodeName;
-                    $nodes['children_count'] = $new_countChild;
-                    $nodes['level'] = $level;
-                    
-                    $json_nodes[] = $nodes;
-                
-        	    }
-        	}
-        }
-    }
+			foreach($result_nodeName as $array_nodeName_keys) {
+
+			$NodeName = $array_nodeName_keys['NodeName'];
+
+			    if($NodeName !== null) {
+
+			    $nodes = array();
+
+			    $nodes['node_id'] = $idNode_output;
+			    $nodes['name'] = $NodeName;
+			    $nodes['children_count'] = $new_countChild;
+			    $nodes['level'] = $level;
+
+			    $json_nodes[] = $nodes;
+
+			    }
+		      }
+		}
+	 }
 
 /*
     Verifico che gli elementi dell'array superiano il valore di record per pagina, mi assicuro che in caso di valore decimale venga resituito l'intero 
