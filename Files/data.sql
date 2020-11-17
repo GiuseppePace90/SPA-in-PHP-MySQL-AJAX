@@ -1,5 +1,5 @@
 --
--- Dump dei dati per la tabella `node_tree`
+-- Dump dei dati per la tabella `node_tree` 
 --
 
 INSERT INTO `node_tree` (`idNode`, `level`, `iLeft`, `iRight`) VALUES 
